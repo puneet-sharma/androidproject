@@ -77,7 +77,7 @@ public class MainActivity extends ListActivity {
 					Toast.LENGTH_LONG).show();
 		} catch (IOException e) {
 			Toast.makeText(this, "Not enough space!", Toast.LENGTH_LONG).show();
-			e.printStackTrace();
+			e.printStackTrace();;
 		}
 	}
 
