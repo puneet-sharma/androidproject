@@ -28,6 +28,7 @@ public class MainActivity extends ListActivity {
 		ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(MainActivity.this,
 				android.R.layout.simple_list_item_1, classes);
 		this.setListAdapter(myAdapter);
+		System.out.println("hah");
 		}
 
 	@Override
