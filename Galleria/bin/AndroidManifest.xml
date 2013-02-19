@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="edu.umbc.CMSC628.galleria.GalleryActivity"
+            android:label="@string/title_activity_gallery"
+            android:parentActivityName="edu.umbc.CMSC628.galleria.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.umbc.CMSC628.galleria.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
