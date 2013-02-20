@@ -55,6 +55,7 @@ public class ImageViewerActivity extends FragmentActivity {
 		// Set up the ViewPager, attaching the adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(myImageAdapter);
+		mViewPager.setCurrentItem(getIntent().getExtras().getInt(Constants.SELECTED_IMAGE_INDEX));
 	}
 
 	/**
@@ -69,7 +70,12 @@ public class ImageViewerActivity extends FragmentActivity {
 			super(fm);
 			context = c;
 		}
-
+		@Override
+		public void setPrimaryItem(ViewGroup container, int position,
+				Object object) {
+			// TODO Auto-generated method stub
+			super.setPrimaryItem(container, position, object);
+		}
 		@Override
 		public Fragment getItem(int i) {
 			ImageFragment fragment = new ImageFragment();
