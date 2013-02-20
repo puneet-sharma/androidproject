@@ -30,6 +30,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.umbc.CMSC628.galleria.MainActivity" />
         </activity>
+        <activity
+            android:name="edu.umbc.CMSC628.galleria.ImageViewerActivity"
+            android:label="@string/title_activity_image_viewer"
+            android:parentActivityName="edu.umbc.CMSC628.galleria.GalleryActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.umbc.CMSC628.galleria.GalleryActivity" />
+        </activity>
     </application>
 
 </manifest>

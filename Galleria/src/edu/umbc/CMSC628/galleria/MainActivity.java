@@ -28,7 +28,6 @@ public class MainActivity extends ListActivity {
 		ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(MainActivity.this,
 				android.R.layout.simple_list_item_1, classes);
 		this.setListAdapter(myAdapter);
-		System.out.println("hah");
 		}
 
 	@Override
@@ -78,7 +77,6 @@ public class MainActivity extends ListActivity {
 		} catch (IOException e) {
 			Toast.makeText(this, "Not enough space!", Toast.LENGTH_LONG).show();
 			e.printStackTrace();
-			System.out.println("beh");
 		}
 	}
 

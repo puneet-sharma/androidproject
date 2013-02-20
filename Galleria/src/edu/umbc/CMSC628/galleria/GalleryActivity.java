@@ -1,16 +1,16 @@
 package edu.umbc.CMSC628.galleria;
 
-import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.support.v4.app.NavUtils;
+import android.widget.GridView;
 
 @SuppressLint("NewApi")
 public class GalleryActivity extends Activity {
@@ -19,8 +19,12 @@ public class GalleryActivity extends Activity {
 			new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, 
 						View v, int position, long id) {
-					Toast.makeText(GalleryActivity.this, 
-							"" + position, Toast.LENGTH_SHORT).show();
+//					Toast.makeText(GalleryActivity.this, 
+//							"" + position, Toast.LENGTH_SHORT).show();
+					
+					Intent imgViewerIntent = new Intent(GalleryActivity.this, ImageViewerActivity.class);
+					imgViewerIntent.putExtra(Constants.SELECTED_IMAGE_INDEX, position);
+					startActivity(imgViewerIntent);
 				}
 			};
 

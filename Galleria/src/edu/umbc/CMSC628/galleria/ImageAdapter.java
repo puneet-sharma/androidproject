@@ -16,7 +16,6 @@ import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter {
 	
-	String extensions[] = {"jpg", "png"};
 	private Context context;
 	public ImageAdapter(Context c) {
 		context=c;
@@ -25,7 +24,7 @@ public class ImageAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		return FileUtils.listFiles(context.getFilesDir(), 
-				extensions, true).size();
+				Constants.extensions, true).size();
 	}
 
 	@Override
@@ -53,7 +52,7 @@ public class ImageAdapter extends BaseAdapter {
         }
         
         Collection<File> photoList = FileUtils.listFiles(context.getFilesDir(), 
-        		extensions, true);
+        		Constants.extensions, true);
         File img= photoList.toArray(new File[photoList.size()])[position];
         Bitmap myBitmap = BitmapFactory.decodeFile(img.getAbsolutePath());
         imageView.setImageBitmap(myBitmap);
