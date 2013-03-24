@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MapAssignment</string>
+    <string name="blah">blah</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="normal">normal</string>
+    <string name="hybrid">hybrid</string>
+    <string name="satellite">satellite</string>
+    <string name="satellite">satellite</string>
+    <string name="terrain">terrain</string>
+    <string-array name="layers_array">
+    	<item>@string/normal</item>
+	    <item>@string/hybrid</item>
+	    <item>@string/satellite</item>
+	    <item>@string/terrain</item>
+  	</string-array>
+	<string name="startprofiler">Start Service</string>
+	<string name="viewonmap">View map</string>
+</resources>
