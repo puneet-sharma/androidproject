@@ -49,7 +49,9 @@ public class MapActivity extends Activity implements LocationListener {
 	Location location;
 	final static String hostIp = "192.168.1.17";
 	private static boolean autoCheckIn;
-	private static int frequency;
+	private static int checkInFrequency;
+	private static boolean autoRefresh;
+	private static int refreshFrequency;
 	private static String loggedUser;
 	private static SharedPreferences sharedPref;
 
@@ -68,10 +70,17 @@ public class MapActivity extends Activity implements LocationListener {
 		
 		//Get shared preference values
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		
 		autoCheckIn = sharedPref.getBoolean(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN, false);
-		frequency = Integer.valueOf(sharedPref.getString(
+		autoRefresh = sharedPref.getBoolean(
+				SettingsActivity.KEY_PREF_AUTO_REFRESH, false);
+		
+		refreshFrequency = Integer.valueOf(sharedPref.getString(
+				SettingsActivity.KEY_PREF_AUTO_REFRESH_FREQ, "5"));
+		checkInFrequency = Integer.valueOf(sharedPref.getString(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, "5"));
+		
 		loggedUser = sharedPref.getString(SettingsActivity.KEY_LOGGED_USERNAME,
 				"");
 
@@ -87,7 +96,7 @@ public class MapActivity extends Activity implements LocationListener {
 		setUpMapIfNeeded();
 
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				frequency * 60 * 1000, 0, this);
+				checkInFrequency * 60 * 1000, 0, this);
 	}
 
 	private void enableLocationSettings() {
@@ -109,7 +118,7 @@ public class MapActivity extends Activity implements LocationListener {
 		setUpMapIfNeeded();
 		if (autoCheckIn) {
 			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, frequency * 60 * 1000, 0,
+					LocationManager.GPS_PROVIDER, checkInFrequency * 60 * 1000, 0,
 					this);
 		}
 	}
@@ -129,8 +138,13 @@ public class MapActivity extends Activity implements LocationListener {
 	public static void loadPrefs() {
 		autoCheckIn = sharedPref.getBoolean(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN, true);
-		frequency = Integer.valueOf(sharedPref.getString(
+		checkInFrequency = Integer.valueOf(sharedPref.getString(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, ""));
+		
+		autoRefresh = sharedPref.getBoolean(
+				SettingsActivity.KEY_PREF_AUTO_REFRESH, false);
+		refreshFrequency = Integer.valueOf(sharedPref.getString(
+				SettingsActivity.KEY_PREF_AUTO_REFRESH_FREQ, "5"));
 	}
 
 	private void setUpMap() {
@@ -192,7 +206,9 @@ public class MapActivity extends Activity implements LocationListener {
 			return true;
 		case R.id.menu_refresh:
 			Toast.makeText(getApplicationContext(),
-					String.valueOf(autoCheckIn), Toast.LENGTH_SHORT).show();
+					String.valueOf(autoRefresh), Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(),
+					String.valueOf(refreshFrequency), Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.menu_log_out:
 			loggedUser = sharedPref.getString(
