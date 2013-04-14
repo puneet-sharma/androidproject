@@ -7,8 +7,6 @@ public class SettingsActivity extends Activity{
 	
 	public static final String KEY_PREF_AUTO_CHECK_IN = "pref_auto_check_in";
 	public static final String KEY_PREF_AUTO_CHECK_IN_FREQ = "sync_frequency";
-	public static final String KEY_PREF_AUTO_REFRESH = "pref_auto_refresh";
-	public static final String KEY_PREF_AUTO_REFRESH_FREQ = "refresh_frequency";
 	public static final String KEY_LOGGED_USERNAME = "logged_username";
 
 	@Override

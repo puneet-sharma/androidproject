@@ -245,11 +245,8 @@ containing a value of this type.
         public static final int menu_log_out=0x7f060018;
         public static final int menu_refresh=0x7f060017;
         public static final int menu_settings=0x7f060013;
-        public static final int pref_auto_check_in=0x7f060028;
+        public static final int pref_auto_check_in=0x7f060026;
         public static final int pref_auto_check_in_summ=0x7f060025;
-        public static final int pref_auto_refresh=0x7f060029;
-        public static final int pref_auto_refresh_summ=0x7f060027;
-        public static final int pref_title_refresh_frequency=0x7f060026;
         /**  Example settings for Data & Sync 
          */
         public static final int pref_title_sync_frequency=0x7f060024;

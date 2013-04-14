@@ -73,11 +73,8 @@ int string menu_forgot_password 0x7f06001e
 int string menu_log_out 0x7f060018
 int string menu_refresh 0x7f060017
 int string menu_settings 0x7f060013
-int string pref_auto_check_in 0x7f060028
+int string pref_auto_check_in 0x7f060026
 int string pref_auto_check_in_summ 0x7f060025
-int string pref_auto_refresh 0x7f060029
-int string pref_auto_refresh_summ 0x7f060027
-int string pref_title_refresh_frequency 0x7f060026
 int string pref_title_sync_frequency 0x7f060024
 int string prompt_email 0x7f06001a
 int string prompt_password 0x7f06001b

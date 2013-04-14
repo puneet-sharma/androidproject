@@ -55,8 +55,6 @@ public class MapActivity extends Activity implements LocationListener {
 	final static String hostIp = "192.168.1.17";
 	private static boolean autoCheckIn;
 	private static int checkInFrequency;
-	private static boolean autoRefresh;
-	private static int refreshFrequency;
 	private static String loggedUser;
 	private static SharedPreferences sharedPref;
 
@@ -78,11 +76,6 @@ public class MapActivity extends Activity implements LocationListener {
 
 		autoCheckIn = sharedPref.getBoolean(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN, false);
-		autoRefresh = sharedPref.getBoolean(
-				SettingsActivity.KEY_PREF_AUTO_REFRESH, false);
-
-		refreshFrequency = Integer.valueOf(sharedPref.getString(
-				SettingsActivity.KEY_PREF_AUTO_REFRESH_FREQ, "5"));
 		checkInFrequency = Integer.valueOf(sharedPref.getString(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, "5"));
 
@@ -136,6 +129,7 @@ public class MapActivity extends Activity implements LocationListener {
 			// Check if we were successful in obtaining the map.
 			if (map != null) {
 				setUpMap();
+				refreshMap();
 			}
 		}
 	}
@@ -145,17 +139,22 @@ public class MapActivity extends Activity implements LocationListener {
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN, true);
 		checkInFrequency = Integer.valueOf(sharedPref.getString(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, ""));
-
-		autoRefresh = sharedPref.getBoolean(
-				SettingsActivity.KEY_PREF_AUTO_REFRESH, false);
-		refreshFrequency = Integer.valueOf(sharedPref.getString(
-				SettingsActivity.KEY_PREF_AUTO_REFRESH_FREQ, "5"));
 	}
 
 	private void setUpMap() {
 		map.setMyLocationEnabled(true);
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(
 				new LatLng(location.getLatitude(), location.getLongitude()), 18));
+	}
+	private void refreshMap() {
+		locationManager.requestLocationUpdates(
+				LocationManager.GPS_PROVIDER, checkInFrequency * 60 * 1000,
+				0, this);
+		
+		String[] params = new String[2];
+		params[0] = String.valueOf(location.getLatitude());
+		params[1] = String.valueOf(location.getLongitude());
+		new FindFriendsTask().execute(params);
 	}
 
 	// public void addMarkerAtRuntime(Profile p) {
@@ -187,10 +186,7 @@ public class MapActivity extends Activity implements LocationListener {
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
 		case R.id.menu_check_in:
-			Criteria criteria = new Criteria();
-			String provider = locationManager.getBestProvider(criteria, false);
-			location = locationManager.getLastKnownLocation(provider);
-
+			refreshMap();
 			String[] params = new String[3];
 			params[0] = loggedUser;
 			params[1] = String.valueOf(location.getLatitude());
@@ -210,10 +206,7 @@ public class MapActivity extends Activity implements LocationListener {
 					"Checked in current location", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.menu_refresh:
-			params = new String[2];
-			params[0] = String.valueOf(location.getLatitude());
-			params[1] = String.valueOf(location.getLongitude());
-			new FindFriendsTask().execute(params);
+			refreshMap();
 			return true;
 		case R.id.menu_log_out:
 			loggedUser = sharedPref.getString(
@@ -234,6 +227,7 @@ public class MapActivity extends Activity implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location arg0) {
+		location = arg0;
 		if (autoCheckIn) {
 			String[] params = new String[3];
 			params[0] = loggedUser;
@@ -270,7 +264,7 @@ public class MapActivity extends Activity implements LocationListener {
 
 	}
 
-	private static class CheckInTask extends AsyncTask<String, Long, String> {
+	private class CheckInTask extends AsyncTask<String, Long, String> {
 
 		@Override
 		protected String doInBackground(String... arg0) {
@@ -308,23 +302,27 @@ public class MapActivity extends Activity implements LocationListener {
 			return responseBody;
 		}
 
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			refreshMap();
+		}
+
 	}
 
 	private class FindFriendsTask extends AsyncTask<String, Long, String> {
 
-		private String username;
-		double latitude;
-		double longitude;
-		
+		JSONArray friends = null;
+
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 			map.clear();
 		}
+
 		@Override
 		protected String doInBackground(String... arg0) {
 			String[] args = arg0;
-			JSONArray friends = null;
 			HttpClient client = new DefaultHttpClient();
 			HttpPost post = new HttpPost("http://" + hostIp
 					+ "/ClosestFriends.php");
@@ -349,13 +347,6 @@ public class MapActivity extends Activity implements LocationListener {
 
 				JSONObject json = new JSONObject(responseBody);
 				friends = json.getJSONArray("friends");
-				for (int i = 0; i < friends.length(); i++) {
-					JSONObject friend = friends.getJSONObject(i).getJSONObject(
-							"friend");
-					username = friend.getString("USERNAME");
-					latitude = friend.getDouble("LATITUDE");
-					longitude = friend.getDouble("LONGITUDE");
-				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -367,21 +358,34 @@ public class MapActivity extends Activity implements LocationListener {
 			// Log.d("ResponseBody", responseBody);
 			return responseBody;
 		}
-		
+
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			if (username.equals(loggedUser)) {
-				map.addMarker(new MarkerOptions()
-						.position(new LatLng(latitude, longitude))
-						.title(username)
-						.snippet("You")
-						.icon(BitmapDescriptorFactory
-								.fromResource(R.drawable.marker_green)));
-			}else{
-				map.addMarker(new MarkerOptions()
-				.position(new LatLng(latitude, longitude))
-				.title(username));
+			for (int i = 0; i < friends.length(); i++) {
+				JSONObject friend;
+				try {
+					friend = friends.getJSONObject(i).getJSONObject("friend");
+					String username = friend.getString("USERNAME");
+					double latitude = friend.getDouble("LATITUDE");
+					double longitude = friend.getDouble("LONGITUDE");
+
+					if (username.equals(loggedUser)) {
+						map.addMarker(new MarkerOptions()
+								.position(new LatLng(latitude, longitude))
+								.title(username)
+								.snippet("You")
+								.icon(BitmapDescriptorFactory
+										.fromResource(R.drawable.marker_green)));
+					} else {
+						map.addMarker(new MarkerOptions().position(
+								new LatLng(latitude, longitude))
+								.title(username));
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 

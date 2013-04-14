@@ -14,20 +14,5 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sync_frequency" />
-    
-    <CheckBoxPreference
-        android:key="pref_auto_refresh"
-        android:title="@string/pref_auto_refresh"
-        android:summary="@string/pref_auto_refresh_summ"
-        android:defaultValue="false" />
-    
-    <ListPreference
-        android:defaultValue="5"
-        android:entries="@array/pref_refresh_frequency_titles"
-        android:entryValues="@array/pref_refresh_frequency_values"
-        android:key="refresh_frequency"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_refresh_frequency" />
 
 </PreferenceScreen>
