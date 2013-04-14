@@ -1,23 +1,26 @@
 package edu.umbc.cmsc628.mapassignment.db;
 
 public class Profile {
-	private float gpsX, gpsY, accel;
+	private double lati, longi, accel;
 	private int orient, id;
-	private String activity;
+	private String activity, address;
 	
+	public String getAddress(){
+		return address;
+	}
 	public int getId(){
 		return id;
 	}
 	
-	public float getGpsX(){
-		return gpsX;
+	public double getLatitude(){
+		return lati;
 	}
 	
-	public float getGpsY(){
-		return gpsY;
+	public double getLongitude(){
+		return longi;
 	}
 	
-	public float getAccel(){
+	public double getAccel(){
 		return accel;
 	}
 	
@@ -33,15 +36,15 @@ public class Profile {
 		id=val;
 	}
 	
-	public void setGpsX(float val){
-		gpsX=val;
+	public void setLatitude(double val){
+		lati=val;
 	}
 	
-	public void setGpsY(float val){
-		gpsY=val;
+	public void setLongitude(double val){
+		longi=val;
 	}
 	
-	public void setAccel(float val){
+	public void setAccel(double val){
 		accel=val;
 	}
 	
@@ -53,13 +56,18 @@ public class Profile {
 		activity=val;
 	}
 	
+	public void setAddress(String val){
+		address = val;
+	}
+	
 	@Override
 	public String toString() {
-		String str = "Lat: "+gpsX
-				+ "  Long: "+gpsY
-				+ "\n Accel: "+accel
-				+ "\n Orient: "+orient
-				+ "\n Activity: "+activity;
+		String str = lati+"$"
+				+ longi+"$"
+				+ accel+"$"
+				+ orient+"$"
+				+ activity+"$"
+				+ address;
 		return str;
 	}
 	

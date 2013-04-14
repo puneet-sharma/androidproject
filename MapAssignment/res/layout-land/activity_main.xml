@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="220dip"
+        android:layout_height="220dip"
+        android:layout_alignBottom="@+id/imageButton1"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="31dp"
+        android:contentDescription="@string/blah"
+        android:scaleType="fitXY"
+        android:src="@drawable/view_profile" />
+
+    <ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="220dip"
+        android:layout_height="220dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="36dp"
+        android:background="@drawable/route_icon"
+        android:contentDescription="@string/blah"
+        android:scaleType="fitXY"
+        android:src="@drawable/route_icon" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imageButton1"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="39dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/startprofiler"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView1"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignLeft="@+id/imageButton2"
+        android:layout_marginLeft="57dp"
+        android:text="@string/viewonmap"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>

@@ -19,4 +19,6 @@
   	</string-array>
 	<string name="startprofiler">Start Service</string>
 	<string name="viewonmap">View map</string>
+	<string name="enable_gps">Enable GPS</string>
+    <string name="enable_gps_dialog">GPS provider not enabled. Would you like to enable it?</string>
 </resources>

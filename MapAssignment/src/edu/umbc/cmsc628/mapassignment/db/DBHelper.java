@@ -13,9 +13,10 @@ public class DBHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_ACCEL = "accel";
 	public static final String COLUMN_ORIENT = "orient";
 	public static final String COLUMN_ACTIVITY = "activity";
+	public static final String COLUMN_ADDRESS = "address";
 
 	private static final String DATABASE_NAME = "profile.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	private static final String DATABASE_CREATE = "create table "
 		      + TABLE_PROFILE + "(" + COLUMN_ID
@@ -24,7 +25,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		      + COLUMN_GPS_Y +" real not null, "
 		      + COLUMN_ACCEL +" real not null, "
 		      + COLUMN_ORIENT +" integer not null, "
-		      + COLUMN_ACTIVITY +" text "
+		      + COLUMN_ACTIVITY +" text, "
+		      + COLUMN_ADDRESS +" text"
 		      +");";
 	
 	public DBHelper(Activity activity) {
@@ -37,7 +39,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
+	public void onUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
 	}
 
