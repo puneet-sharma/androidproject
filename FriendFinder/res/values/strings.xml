@@ -9,5 +9,7 @@
 	<string name="menu_check_in">Check in</string>
 	<string name="menu_refresh">Refresh</string>
 	<string name="menu_log_out">Log out</string>
+	<string name="menu_settings">Settings</string>
+
 	
 </resources>

@@ -18,11 +18,13 @@ import org.apache.http.message.BasicNameValuePair;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
@@ -41,12 +43,16 @@ public class MapActivity extends Activity {
 	private GoogleMap map;
 	private LocationManager locationManager;
 	Location location;
+	private static String hostIp;
+	private static boolean autoCheckIn;
+	private static int frequency;
+	private static SharedPreferences sharedPref;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
-
+		hostIp = getIntent().getExtras().getString("hostIp");
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		boolean enabled = locationManager
 				.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -54,7 +60,10 @@ public class MapActivity extends Activity {
 			enableLocationSettings();
 			//new EnableGpsDialogFragment().show(getSupportFragmentManager(), "enableGpsDialog");
 		}
-
+		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		autoCheckIn = sharedPref.getBoolean(SettingsActivity.KEY_PREF_AUTO_CHECK_IN, true);
+		frequency = Integer.valueOf(sharedPref.getString(SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, ""));
+		//autoCheckIn = getPr
 		Criteria criteria = new Criteria();
 		String provider = locationManager.getBestProvider(criteria, false);
 		location = locationManager.getLastKnownLocation(provider);
@@ -85,6 +94,11 @@ public class MapActivity extends Activity {
 		}
 	}
 
+	public static void loadPrefs(){
+		autoCheckIn = sharedPref.getBoolean(SettingsActivity.KEY_PREF_AUTO_CHECK_IN, true);
+		frequency = Integer.valueOf(sharedPref.getString(SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, ""));
+	}
+	
 	private void setUpMap() {
 		map.setMyLocationEnabled(true);
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -123,22 +137,26 @@ public class MapActivity extends Activity {
 			Toast.makeText(getApplicationContext(), "Check in", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.menu_refresh:
-			Toast.makeText(getApplicationContext(), "Refresh", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), String.valueOf(autoCheckIn), Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.menu_log_out:
-			Toast.makeText(getApplicationContext(), "Log out", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), String.valueOf(frequency), Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.menu_settings:
+			Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+			startActivity(settingsIntent);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
-	private static class sessionPostTask extends AsyncTask<String, Long, String>{
+	private static class checkInTask extends AsyncTask<String, Long, String>{
 
 		@Override
 		protected String doInBackground(String... arg0) {
 			String[] credentials = arg0;
 			HttpClient client = new DefaultHttpClient();
-			HttpPost post = new HttpPost("http://130.85.251.231/db.php");
+			HttpPost post = new HttpPost("http://"+hostIp+"/db.php");
 			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
 			pairs.add((NameValuePair) new BasicNameValuePair("latitude", credentials[0]));
 			pairs.add((NameValuePair) new BasicNameValuePair("longitude", credentials[1]));

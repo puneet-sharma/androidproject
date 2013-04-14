@@ -290,6 +290,9 @@ public class LoginActivity extends Activity {
 
 			if (success) {
 				Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+				Bundle bundle = new Bundle();   
+                bundle.putString( "hostIp",hostIp);        
+                mapIntent.putExtras(bundle);
 				startActivity(mapIntent);
 				
 			} else {
