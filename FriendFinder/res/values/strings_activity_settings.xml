@@ -1,0 +1,28 @@
+<resources>
+
+    <string name="title_activity_settings">Settings</string>
+
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_title_sync_frequency">Auto Check in frequency</string>
+
+    <string name="pref_auto_check_in">Auto check in enabled?</string>
+	<string name="pref_auto_check_in_summ">Mark this check box if you want the app to do auto check ins for you at fixed intervals of time.</string>
+	
+    <string-array name="pref_sync_frequency_titles">
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>1</item>
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+    </string-array>
+
+</resources>
