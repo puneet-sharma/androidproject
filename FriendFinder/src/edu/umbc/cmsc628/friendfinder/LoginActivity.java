@@ -24,6 +24,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
@@ -37,13 +38,14 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
  * well.
  */
 public class LoginActivity extends Activity {
+	
+	private String loggedUser;
 	/**
 	 * A dummy authentication store containing known user names and passwords.
 	 * TODO: remove after connecting to a real authentication system.
@@ -76,7 +78,15 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		creds = new HashMap<String,String>();
 		setContentView(R.layout.activity_login);
-
+		loggedUser = PreferenceManager.getDefaultSharedPreferences(this)
+				.getString(SettingsActivity.KEY_LOGGED_USERNAME,
+				"");
+		
+		if(loggedUser!=null && loggedUser!=""){
+			Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+			startActivity(mapIntent);
+			finish();
+		}
 		// Set up the login form.
 		mUserName = getIntent().getStringExtra(EXTRA_USERNAME);
 		mUserNameView = (EditText) findViewById(R.id.username);
@@ -235,7 +245,7 @@ public class LoginActivity extends Activity {
 			JSONArray users = null;
 			try {
 				responseBody = client.execute(post, responseHandler);
-
+				System.err.println("Response from QueryUSers.php: "+responseBody);
 				JSONObject json = new JSONObject(responseBody);
 				users = json.getJSONArray("users");
 				for (int i = 0; i < users.length(); i++) {
@@ -295,6 +305,8 @@ public class LoginActivity extends Activity {
 				Editor editor = prefs.edit();
 				editor.putString(SettingsActivity.KEY_LOGGED_USERNAME, mUserName);
 				editor.commit();
+				Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+				startActivity(mapIntent);
 				finish();
 				
 			} else {

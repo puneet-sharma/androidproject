@@ -52,7 +52,7 @@ public class MapActivity extends Activity implements LocationListener {
 	private GoogleMap map;
 	private LocationManager locationManager;
 	Location location;
-	final static String hostIp = "192.168.1.17";
+	final static String hostIp = "mpss.csce.uark.edu/~sharma_fan";
 	private static boolean autoCheckIn;
 	private static int checkInFrequency;
 	private static String loggedUser;
@@ -67,8 +67,6 @@ public class MapActivity extends Activity implements LocationListener {
 				.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		if (!enabled) {
 			enableLocationSettings();
-			// new EnableGpsDialogFragment().show(getSupportFragmentManager(),
-			// "enableGpsDialog");
 		}
 
 		// Get shared preference values
@@ -81,13 +79,7 @@ public class MapActivity extends Activity implements LocationListener {
 
 		loggedUser = sharedPref.getString(SettingsActivity.KEY_LOGGED_USERNAME,
 				"");
-
-		if (loggedUser == null || loggedUser == "") {
-			Intent loginIntent = new Intent(getApplicationContext(),
-					LoginActivity.class);
-			startActivity(loginIntent);
-		}
-
+		
 		Criteria criteria = new Criteria();
 		String provider = locationManager.getBestProvider(criteria, false);
 		location = locationManager.getLastKnownLocation(provider);
@@ -138,7 +130,9 @@ public class MapActivity extends Activity implements LocationListener {
 		autoCheckIn = sharedPref.getBoolean(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN, true);
 		checkInFrequency = Integer.valueOf(sharedPref.getString(
-				SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, ""));
+				SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, "5"));
+		loggedUser = sharedPref.getString(SettingsActivity.KEY_LOGGED_USERNAME,
+				"");
 	}
 
 	private void setUpMap() {
@@ -157,13 +151,6 @@ public class MapActivity extends Activity implements LocationListener {
 		new FindFriendsTask().execute(params);
 	}
 
-	// public void addMarkerAtRuntime(Profile p) {
-	// map.addMarker(new MarkerOptions()
-	// .position(new LatLng(p.getLatitude(), p.getLongitude()))
-	// .title(String.valueOf(p.getId())).snippet(p.toString()));
-	// // .icon(BitmapDescriptorFactory
-	// // .fromResource(R.drawable.mapmarker)));
-	// }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -176,16 +163,10 @@ public class MapActivity extends Activity implements LocationListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
 		case R.id.menu_check_in:
+			loadPrefs();
 			refreshMap();
 			String[] params = new String[3];
 			params[0] = loggedUser;
@@ -266,6 +247,14 @@ public class MapActivity extends Activity implements LocationListener {
 
 	private class CheckInTask extends AsyncTask<String, Long, String> {
 
+		JSONArray friends = null;
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			map.clear();
+		}
+		
 		@Override
 		protected String doInBackground(String... arg0) {
 			String[] args = arg0;
@@ -279,6 +268,8 @@ public class MapActivity extends Activity implements LocationListener {
 					args[1]));
 			pairs.add((NameValuePair) new BasicNameValuePair("longitude",
 					args[2]));
+			pairs.add((NameValuePair) new BasicNameValuePair("format",
+					"json"));
 
 			try {
 				post.setEntity(new UrlEncodedFormEntity(pairs));
@@ -291,10 +282,16 @@ public class MapActivity extends Activity implements LocationListener {
 			String responseBody = "default";
 			try {
 				responseBody = client.execute(post, responseHandler);
+				System.err.println(responseBody);
+				JSONObject json = new JSONObject(responseBody);
+				friends = json.getJSONArray("friends");
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -305,7 +302,35 @@ public class MapActivity extends Activity implements LocationListener {
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			refreshMap();
+			if(friends==null)
+				finish();
+			
+			map.clear();
+			for (int i = 0; i < friends.length(); i++) {
+				JSONObject friend;
+				try {
+					friend = friends.getJSONObject(i).getJSONObject("friend");
+					String username = friend.getString("USERNAME");
+					double latitude = friend.getDouble("LATITUDE");
+					double longitude = friend.getDouble("LONGITUDE");
+
+					if (username.equals(loggedUser)) {
+						map.addMarker(new MarkerOptions()
+								.position(new LatLng(latitude, longitude))
+								.title(username)
+								.snippet("You")
+								.icon(BitmapDescriptorFactory
+										.fromResource(R.drawable.marker_green)));
+					} else {
+						map.addMarker(new MarkerOptions().position(
+								new LatLng(latitude, longitude))
+								.title(username));
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 
 	}
@@ -332,6 +357,8 @@ public class MapActivity extends Activity implements LocationListener {
 					args[0]));
 			pairs.add((NameValuePair) new BasicNameValuePair("longitude",
 					args[1]));
+			pairs.add((NameValuePair) new BasicNameValuePair("format",
+					"json"));
 
 			try {
 				post.setEntity(new UrlEncodedFormEntity(pairs));
@@ -344,7 +371,7 @@ public class MapActivity extends Activity implements LocationListener {
 			String responseBody = "default";
 			try {
 				responseBody = client.execute(post, responseHandler);
-
+				System.err.println(responseBody);
 				JSONObject json = new JSONObject(responseBody);
 				friends = json.getJSONArray("friends");
 			} catch (ClientProtocolException e) {
@@ -362,6 +389,9 @@ public class MapActivity extends Activity implements LocationListener {
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
+			if(friends==null)
+				finish();
+			
 			for (int i = 0; i < friends.length(); i++) {
 				JSONObject friend;
 				try {
