@@ -24,10 +24,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -67,7 +69,6 @@ public class LoginActivity extends Activity {
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
-	final static String hostIp="192.168.1.17";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -217,7 +218,7 @@ public class LoginActivity extends Activity {
 		protected Boolean doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
 			HttpClient client = new DefaultHttpClient();
-			HttpPost post = new HttpPost("http://"+hostIp+"/QueryUsers.php");
+			HttpPost post = new HttpPost("http://"+MapActivity.hostIp+"/QueryUsers.php");
 			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
 			pairs.add((NameValuePair) new BasicNameValuePair("format", "json"));
 
@@ -258,7 +259,7 @@ public class LoginActivity extends Activity {
 				}
 			}
 			
-			post = new HttpPost("http://"+hostIp+"/createUser.php");
+			post = new HttpPost("http://"+MapActivity.hostIp+"/createUser.php");
 			pairs = new ArrayList<NameValuePair>();
 			pairs.add((NameValuePair) new BasicNameValuePair("username",
 					mUserName));
@@ -289,11 +290,11 @@ public class LoginActivity extends Activity {
 			showProgress(false);
 
 			if (success) {
-				Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
-				Bundle bundle = new Bundle();   
-                bundle.putString( "hostIp",hostIp);        
-                mapIntent.putExtras(bundle);
-				startActivity(mapIntent);
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				Editor editor = prefs.edit();
+				editor.putString(SettingsActivity.KEY_LOGGED_USERNAME, mUserName);
+				editor.commit();
+				finish();
 				
 			} else {
 				mPasswordView
