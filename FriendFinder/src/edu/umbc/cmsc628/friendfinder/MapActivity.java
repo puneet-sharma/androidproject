@@ -15,6 +15,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -38,7 +41,9 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapActivity extends Activity implements LocationListener {
 
@@ -67,20 +72,20 @@ public class MapActivity extends Activity implements LocationListener {
 			// new EnableGpsDialogFragment().show(getSupportFragmentManager(),
 			// "enableGpsDialog");
 		}
-		
-		//Get shared preference values
+
+		// Get shared preference values
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		
+
 		autoCheckIn = sharedPref.getBoolean(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN, false);
 		autoRefresh = sharedPref.getBoolean(
 				SettingsActivity.KEY_PREF_AUTO_REFRESH, false);
-		
+
 		refreshFrequency = Integer.valueOf(sharedPref.getString(
 				SettingsActivity.KEY_PREF_AUTO_REFRESH_FREQ, "5"));
 		checkInFrequency = Integer.valueOf(sharedPref.getString(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, "5"));
-		
+
 		loggedUser = sharedPref.getString(SettingsActivity.KEY_LOGGED_USERNAME,
 				"");
 
@@ -111,15 +116,15 @@ public class MapActivity extends Activity implements LocationListener {
 		if (locationManager != null)
 			locationManager.removeUpdates(this);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		setUpMapIfNeeded();
 		if (autoCheckIn) {
 			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, checkInFrequency * 60 * 1000, 0,
-					this);
+					LocationManager.GPS_PROVIDER, checkInFrequency * 60 * 1000,
+					0, this);
 		}
 	}
 
@@ -140,7 +145,7 @@ public class MapActivity extends Activity implements LocationListener {
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN, true);
 		checkInFrequency = Integer.valueOf(sharedPref.getString(
 				SettingsActivity.KEY_PREF_AUTO_CHECK_IN_FREQ, ""));
-		
+
 		autoRefresh = sharedPref.getBoolean(
 				SettingsActivity.KEY_PREF_AUTO_REFRESH, false);
 		refreshFrequency = Integer.valueOf(sharedPref.getString(
@@ -185,7 +190,7 @@ public class MapActivity extends Activity implements LocationListener {
 			Criteria criteria = new Criteria();
 			String provider = locationManager.getBestProvider(criteria, false);
 			location = locationManager.getLastKnownLocation(provider);
-			
+
 			String[] params = new String[3];
 			params[0] = loggedUser;
 			params[1] = String.valueOf(location.getLatitude());
@@ -201,14 +206,14 @@ public class MapActivity extends Activity implements LocationListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Toast.makeText(getApplicationContext(), "Checked in current location",
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(),
+					"Checked in current location", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.menu_refresh:
-			Toast.makeText(getApplicationContext(),
-					String.valueOf(autoRefresh), Toast.LENGTH_SHORT).show();
-			Toast.makeText(getApplicationContext(),
-					String.valueOf(refreshFrequency), Toast.LENGTH_SHORT).show();
+			params = new String[2];
+			params[0] = String.valueOf(location.getLatitude());
+			params[1] = String.valueOf(location.getLongitude());
+			new FindFriendsTask().execute(params);
 			return true;
 		case R.id.menu_log_out:
 			loggedUser = sharedPref.getString(
@@ -225,6 +230,44 @@ public class MapActivity extends Activity implements LocationListener {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onLocationChanged(Location arg0) {
+		if (autoCheckIn) {
+			String[] params = new String[3];
+			params[0] = loggedUser;
+			params[1] = String.valueOf(location.getLatitude());
+			params[2] = String.valueOf(location.getLongitude());
+			try {
+				String response = new CheckInTask().execute(params).get();
+				Log.d("MapActivity", response);
+				Toast.makeText(getApplicationContext(),
+						"Checked in current location", Toast.LENGTH_SHORT)
+						.show();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void onProviderDisabled(String arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onProviderEnabled(String arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+
 	}
 
 	private static class CheckInTask extends AsyncTask<String, Long, String> {
@@ -267,41 +310,80 @@ public class MapActivity extends Activity implements LocationListener {
 
 	}
 
-	@Override
-	public void onLocationChanged(Location arg0) {
-		if (autoCheckIn) {
-			String[] params = new String[3];
-			params[0] = loggedUser;
-			params[1] = String.valueOf(location.getLatitude());
-			params[2] = String.valueOf(location.getLongitude());
+	private class FindFriendsTask extends AsyncTask<String, Long, String> {
+
+		private String username;
+		double latitude;
+		double longitude;
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			map.clear();
+		}
+		@Override
+		protected String doInBackground(String... arg0) {
+			String[] args = arg0;
+			JSONArray friends = null;
+			HttpClient client = new DefaultHttpClient();
+			HttpPost post = new HttpPost("http://" + hostIp
+					+ "/ClosestFriends.php");
+			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+
+			pairs.add((NameValuePair) new BasicNameValuePair("latitude",
+					args[0]));
+			pairs.add((NameValuePair) new BasicNameValuePair("longitude",
+					args[1]));
+
 			try {
-				String response = new CheckInTask().execute(params).get();
-				Log.d("MapActivity", response);
-				Toast.makeText(getApplicationContext(), "Checked in current location",
-						Toast.LENGTH_SHORT).show();
-			} catch (InterruptedException e) {
+				post.setEntity(new UrlEncodedFormEntity(pairs));
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+			String responseBody = "default";
+			try {
+				responseBody = client.execute(post, responseHandler);
+
+				JSONObject json = new JSONObject(responseBody);
+				friends = json.getJSONArray("friends");
+				for (int i = 0; i < friends.length(); i++) {
+					JSONObject friend = friends.getJSONObject(i).getJSONObject(
+							"friend");
+					username = friend.getString("USERNAME");
+					latitude = friend.getDouble("LATITUDE");
+					longitude = friend.getDouble("LONGITUDE");
+				}
+			} catch (ClientProtocolException e) {
 				e.printStackTrace();
-			} catch (ExecutionException e) {
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			// Log.d("ResponseBody", responseBody);
+			return responseBody;
 		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if (username.equals(loggedUser)) {
+				map.addMarker(new MarkerOptions()
+						.position(new LatLng(latitude, longitude))
+						.title(username)
+						.snippet("You")
+						.icon(BitmapDescriptorFactory
+								.fromResource(R.drawable.marker_green)));
+			}else{
+				map.addMarker(new MarkerOptions()
+				.position(new LatLng(latitude, longitude))
+				.title(username));
+			}
+		}
+
 	}
-
-	@Override
-	public void onProviderDisabled(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onProviderEnabled(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-
-	}
-
 }
