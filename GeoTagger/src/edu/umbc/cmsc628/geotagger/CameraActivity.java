@@ -14,6 +14,7 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
@@ -49,10 +50,6 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		cameraSurfaceView = new CameraSurfaceView(this);
 		preview.addView(cameraSurfaceView);
-
-		// grab out shutter button so we can reference it later
-		//shutterButton = (Button) findViewById(R.id.shutter_button);
-		//shutterButton.setOnClickListener(this);
 	}
 
 	@Override
@@ -119,9 +116,7 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 		
 		new UploadPic().execute(filename);
 		finish();
-		// Restart the preview and re-enable the shutter button so that we can take another picture
-		//camera.startPreview();
-		//shutterButton.setEnabled(true);
+
 	}
 	
 	private File getDir() {
@@ -135,9 +130,9 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 		@Override
 		protected String doInBackground(String... args) {
 			String fileName = args[0];
-			HttpResponse response = null;
+			String response = "";
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpContext localContext = new BasicHttpContext();
+			//HttpContext localContext = new BasicHttpContext();
 			HttpPost httpPost = new HttpPost("http://" + SERVER_IP + "/test.php");
 			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
 			pairs.add((NameValuePair) new BasicNameValuePair("image",
@@ -158,7 +153,7 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 
 		        httpPost.setEntity(entity);
 
-		        response = httpClient.execute(httpPost, localContext);
+		        response = httpClient.execute(httpPost, new BasicResponseHandler());
 		    } catch (IOException e) {
 		        e.printStackTrace();
 		    }
