@@ -37,12 +37,14 @@ public class MainActivity extends Activity implements RecognitionListener {
     @Override
 	public void onPause() {
     	super.onPause();
+    	mNoSpeechCountDown.cancel();
 		Log.i(TAG, "onPause");
 	}
     
     @Override
 	public void onResume() {
     	super.onResume();
+    	mNoSpeechCountDown.start();
 		Log.i(TAG, "onResume");
 	}
     
