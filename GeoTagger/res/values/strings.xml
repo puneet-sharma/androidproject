@@ -7,5 +7,10 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_make_photo">MakePhotoActivity</string>
     <string name="title_activity_camera">CameraActivity</string>
+    <string name="instructions">Keywords accepted :</string>
+    <string name="stop">1) \'stop\' to tag stop signs</string>
+    <string name="traffic">2) \'traffic\' to tag high traffic</string>
+    <string name="accident">3) \'accident\' to tag an accident</string>
+    <string name="signal">4) \'signal\' to tag traffic signals</string>
 
 </resources>

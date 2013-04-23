@@ -64,7 +64,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 		super.onPause();
 		mNoSpeechCountDown.cancel();
 		mSpeechRecognizer.cancel();
-		Log.i(TAG, "Timer cancelled!");
+		Log.i(TAG, "on pause");
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 
 	@Override
 	public void onError(int error) {
-		Log.i(TAG, "onError");
+		//Log.i(TAG, "onError");
 		mNoSpeechCountDown.cancel();
 		mNoSpeechCountDown.start();
 	}
@@ -168,7 +168,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 
 		@Override
 		public void onTick(long millisUntilFinished) {
-			Log.d(TAG, "onTick");
+			//Log.d(TAG, "onTick");
 			mSpeechRecognizer.cancel();
 			mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
 		}

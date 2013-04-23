@@ -36,7 +36,8 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 	CameraSurfaceView cameraSurfaceView;
 	//Button shutterButton;
 	private final static String DEBUG_TAG = "CameraActivity";
-	private final static String SERVER_IP = "130.85.241.132";
+	//private final static String SERVER_IP = "130.85.241.132";
+	private final static String SERVER_IP = "mpss.csce.uark.edu/~sharma_fan";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

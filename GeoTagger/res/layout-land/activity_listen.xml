@@ -1,17 +1,59 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_above="@+id/textView1"
-    android:layout_toLeftOf="@+id/textView1"
-    android:gravity="center"
-    android:orientation="vertical" > 
+    android:layout_height="fill_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/instructions"
+        android:paddingTop="5pt"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stop"
+        android:layout_below="@id/textView1"
+        android:paddingTop="5pt"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/traffic"
+        android:layout_below="@id/textView2"
+        android:paddingTop="5pt"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/accident"
+        android:layout_below="@id/textView3"
+        android:paddingTop="5pt"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/signal"
+        android:layout_below="@id/textView4"
+        android:paddingTop="5pt"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="354dp"
         android:layout_height="match_parent"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ear" />
+        android:layout_toRightOf="@+id/textView1"
+        android:src="@drawable/mic" />
  
-</LinearLayout>
+</RelativeLayout>
