@@ -17,7 +17,7 @@ import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements RecognitionListener, LocationListener {
+public class ListenActivity extends Activity implements RecognitionListener, LocationListener {
 
 	private static String TAG = "MainActivity";
 	protected SpeechRecognizer mSpeechRecognizer;
@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements RecognitionListener, Locat
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_listen);
 		
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		boolean enabled = locationManager
