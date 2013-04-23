@@ -21,30 +21,36 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int ear=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
-        public static final int mic=0x7f020002;
+        public static final int ic_launcher=0x7f020000;
+        public static final int mic=0x7f020001;
+        public static final int view_profile=0x7f020002;
     }
     public static final class id {
-        public static final int action_settings=0x7f090009;
+        public static final int action_settings=0x7f09000d;
         public static final int buttonStopListening=0x7f090007;
         public static final int camera_preview=0x7f090000;
+        public static final int imageButton1=0x7f090009;
+        public static final int imageButton2=0x7f090008;
         public static final int imageView1=0x7f090006;
-        public static final int menu_settings=0x7f090008;
+        public static final int menu_settings=0x7f09000c;
+        public static final int textSpeak=0x7f09000a;
         public static final int textView1=0x7f090001;
         public static final int textView2=0x7f090002;
         public static final int textView3=0x7f090003;
         public static final int textView4=0x7f090004;
         public static final int textView5=0x7f090005;
+        public static final int textViewOnMap=0x7f09000b;
     }
     public static final class layout {
         public static final int activity_camera=0x7f030000;
         public static final int activity_listen=0x7f030001;
+        public static final int activity_main=0x7f030002;
     }
     public static final class menu {
         public static final int activity_camera=0x7f080000;
-        public static final int activity_make_photo=0x7f080001;
-        public static final int main=0x7f080002;
+        public static final int activity_main=0x7f080001;
+        public static final int activity_make_photo=0x7f080002;
+        public static final int main=0x7f080003;
     }
     public static final class raw {
         public static final int beep=0x7f040000;
@@ -57,11 +63,14 @@ public final class R {
         public static final int instructions=0x7f060006;
         public static final int menu_settings=0x7f060003;
         public static final int signal=0x7f06000a;
+        public static final int speak=0x7f06000d;
         public static final int stop=0x7f060007;
         public static final int stop_service=0x7f06000b;
         public static final int title_activity_camera=0x7f060005;
+        public static final int title_activity_main=0x7f06000c;
         public static final int title_activity_make_photo=0x7f060004;
         public static final int traffic=0x7f060008;
+        public static final int viewonmap=0x7f06000e;
     }
     public static final class style {
         /** 

@@ -13,5 +13,8 @@
     <string name="accident">3) \'accident\' to tag an accident</string>
     <string name="signal">4) \'signal\' to tag traffic signals</string>
     <string name="stop_service">Stop listening</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="speak">Geo tag locations by voice</string>
+    <string name="viewonmap">View tagged locations on map</string>
 
 </resources>

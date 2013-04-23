@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/textSpeak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textViewOnMap"
+        android:layout_alignLeft="@+id/imageButton1"
+        android:text="@string/speak"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="220dip"
+        android:layout_height="220dip"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textViewOnMap"
+        android:layout_marginRight="50dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/view_profile" />
+
+    <ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="220dip"
+        android:layout_height="220dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/imageButton2"
+        android:layout_marginLeft="48dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/mic" />
+
+    <TextView
+        android:id="@+id/textViewOnMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/imageButton2"
+        android:layout_marginTop="16dp"
+        android:text="@string/viewonmap"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>
