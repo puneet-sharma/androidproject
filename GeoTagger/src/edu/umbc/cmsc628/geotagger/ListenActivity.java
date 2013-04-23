@@ -145,8 +145,8 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 		}
 		if (matchFound) {
 			System.err.println("Matchfound!");
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, this);
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, this);
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 		} else {
 			Toast.makeText(
 					getApplicationContext(),
@@ -170,7 +170,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 	}
 
 	protected CountDownTimer mNoSpeechCountDown = new CountDownTimer(240000,
-			6000) {
+			8000) {
 
 		@Override
 		public void onTick(long millisUntilFinished) {

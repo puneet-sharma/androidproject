@@ -194,8 +194,6 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			Log.d(DEBUG_TAG,result);
-			Toast.makeText(getApplicationContext(), result,
-					Toast.LENGTH_LONG).show();
 		}
 		
 	}
