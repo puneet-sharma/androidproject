@@ -21,6 +21,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,6 +41,9 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 	private final static String DEBUG_TAG = "CameraActivity";
 	//private final static String SERVER_IP = "130.85.241.132";
 	private final static String SERVER_IP = "mpss.csce.uark.edu/~sharma_fan";
+	private SoundPool soundPool;
+	private int soundID;
+	boolean loaded = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,18 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		cameraSurfaceView = new CameraSurfaceView(this);
 		preview.addView(cameraSurfaceView);
+		
+		this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+	    // Load the sound
+	    soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+	    soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+	      @Override
+	      public void onLoadComplete(SoundPool soundPool, int sampleId,
+	          int status) {
+	        loaded = true;
+	      }
+	    });
+	    soundID = soundPool.load(this, R.raw.beep, 1);
 	}
 
 	@Override
@@ -162,6 +180,10 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 		        httpPost.setEntity(entity);
 
 		        response = httpClient.execute(httpPost, new BasicResponseHandler());
+		        playSound();
+		        if(response.contains("successfully uploaded")){
+		        	System.err.println("Contains 'uploaded'");
+		        }
 		    } catch (IOException e) {
 		        e.printStackTrace();
 		    }
@@ -176,5 +198,19 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 					Toast.LENGTH_LONG).show();
 		}
 		
+	}
+	
+	private void playSound(){
+		AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+	      float actualVolume = (float) audioManager
+	          .getStreamVolume(AudioManager.STREAM_MUSIC);
+	      float maxVolume = (float) audioManager
+	          .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+	      float volume = actualVolume / maxVolume;
+	      // Is the sound loaded already?
+	      if (loaded) {
+	        soundPool.play(soundID, volume, volume, 1, 0, 1f);
+	        Log.e("Test", "Played sound");
+	      }
 	}
 }

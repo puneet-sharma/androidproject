@@ -12,5 +12,6 @@
     <string name="traffic">2) \'traffic\' to tag high traffic</string>
     <string name="accident">3) \'accident\' to tag an accident</string>
     <string name="signal">4) \'signal\' to tag traffic signals</string>
+    <string name="stop_service">Stop listening</string>
 
 </resources>

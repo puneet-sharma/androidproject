@@ -55,5 +55,14 @@
         android:contentDescription="@string/app_name"
         android:layout_below="@+id/textView4"
         android:src="@drawable/mic" />
+    
+    <Button
+        android:id="@+id/buttonStopListening"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView5"
+        android:layout_below="@+id/textView5"
+        android:layout_marginTop="35dp"
+        android:text="@string/stop_service" />
  
 </RelativeLayout>

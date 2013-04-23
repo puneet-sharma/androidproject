@@ -16,14 +16,20 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 
-public class ListenActivity extends Activity implements RecognitionListener, LocationListener {
+public class ListenActivity extends Activity implements RecognitionListener, LocationListener, OnClickListener {
 
 	private static String TAG = "MainActivity";
 	protected SpeechRecognizer mSpeechRecognizer;
 	protected Intent mSpeechRecognizerIntent;
 	private LocationManager locationManager;
+	private Button stopButton;
+	
+	
 	private static enum Type {
 		stop, signal, traffic, accident, construction
 	}
@@ -34,6 +40,8 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 		super.onCreate(savedInstanceState);
 		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		setContentView(R.layout.activity_listen);
+		stopButton = (Button) findViewById(R.id.buttonStopListening);
+		stopButton.setOnClickListener(this);
 		
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		boolean enabled = locationManager
@@ -62,8 +70,6 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 	@Override
 	public void onPause() {
 		super.onPause();
-		mNoSpeechCountDown.cancel();
-		mSpeechRecognizer.cancel();
 		Log.i(TAG, "on pause");
 	}
 
@@ -164,7 +170,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 	}
 
 	protected CountDownTimer mNoSpeechCountDown = new CountDownTimer(240000,
-			8000) {
+			6000) {
 
 		@Override
 		public void onTick(long millisUntilFinished) {
@@ -212,5 +218,12 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onClick(View v) {
+		mNoSpeechCountDown.cancel();
+		mSpeechRecognizer.cancel();
+		finish();
 	}
 }
