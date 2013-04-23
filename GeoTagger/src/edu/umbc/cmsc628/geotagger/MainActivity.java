@@ -3,25 +3,42 @@ package edu.umbc.cmsc628.geotagger;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements RecognitionListener {
+public class MainActivity extends Activity implements RecognitionListener, LocationListener {
 
 	private static String TAG = "MainActivity";
 	protected SpeechRecognizer mSpeechRecognizer;
 	protected Intent mSpeechRecognizerIntent;
-
+	private LocationManager locationManager;
+	private static enum Type {
+		stop, signal, traffic, accident, construction
+	}
+	
+	Type type;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		boolean enabled = locationManager
+				.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		if (!enabled) {
+			enableLocationSettings();
+		}
 
 		mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 		mSpeechRecognizer.setRecognitionListener(this);
@@ -34,6 +51,12 @@ public class MainActivity extends Activity implements RecognitionListener {
 		mNoSpeechCountDown.start();
 	}
 
+	private void enableLocationSettings() {
+		Intent settingsIntent = new Intent(
+				Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		startActivity(settingsIntent);
+	}
+	
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -56,6 +79,8 @@ public class MainActivity extends Activity implements RecognitionListener {
 		mNoSpeechCountDown.cancel();
 		mSpeechRecognizer.cancel();
 		mSpeechRecognizer.destroy();
+		if (locationManager != null)
+			locationManager.removeUpdates(this);
 	}
 
 	@Override
@@ -98,19 +123,22 @@ public class MainActivity extends Activity implements RecognitionListener {
 	@Override
 	public void onResults(Bundle results) {
 		Log.i(TAG, "onResults");
-		String str = new String();
+		boolean matchFound =false;
 
 		ArrayList<String> data = results
 				.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
 		for (int i = 0; i < data.size(); i++) {
-			str += data.get(i) + "\n";
-
+			if(isInEnum(data.get(i), Type.class)){
+				matchFound=true;
+				type = Type.valueOf(data.get(i));
+				break;
+			}
 		}
-
-		if (str.contains("camera")) {
-			Intent camIntent = new Intent(this, CameraActivity.class);
-			startActivity(camIntent);
+		if (matchFound) {
+			System.err.println("Matchfound!");
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, this);
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, this);
 		} else {
 			Toast.makeText(
 					getApplicationContext(),
@@ -120,6 +148,13 @@ public class MainActivity extends Activity implements RecognitionListener {
 		mNoSpeechCountDown.cancel();
 		mNoSpeechCountDown.start();
 	}
+	
+	public <E extends Enum<E>> boolean isInEnum(String value, Class<E> enumClass) {
+		  for (E e : enumClass.getEnumConstants()) {
+		    if(e.name().equals(value)) { return true; }
+		  }
+		  return false;
+		}
 
 	@Override
 	public void onRmsChanged(float rmsdB) {
@@ -143,4 +178,37 @@ public class MainActivity extends Activity implements RecognitionListener {
 			finish();
 		}
 	};
+
+	@Override
+	public void onLocationChanged(Location location) {
+		System.err.println("GPS coordinates recieved");
+		Intent camIntent = new Intent(this, CameraActivity.class);
+		Bundle bundle = new Bundle();
+		bundle.putString("latitude", String.valueOf(location.getLatitude()));
+		bundle.putString("longitude", String.valueOf(location.getLongitude()));
+		bundle.putString("type", String.valueOf(type));
+		camIntent.putExtras(bundle);
+		startActivity(camIntent);
+		if (locationManager != null)
+			locationManager.removeUpdates(this);
+		
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}
 }

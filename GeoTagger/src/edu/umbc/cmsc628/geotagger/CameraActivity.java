@@ -3,6 +3,7 @@ package edu.umbc.cmsc628.geotagger;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,10 +131,20 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 			String response = "";
 			HttpClient httpClient = new DefaultHttpClient();
 			//HttpContext localContext = new BasicHttpContext();
-			HttpPost httpPost = new HttpPost("http://" + SERVER_IP + "/test.php");
+			HttpPost httpPost = new HttpPost("http://" + SERVER_IP + "/upload.php");
+			String latitude = getIntent().getExtras().getString("latitude");
+			String longitude = getIntent().getExtras().getString("longitude");
+			String type = getIntent().getExtras().getString("type");
+			
 			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
 			pairs.add((NameValuePair) new BasicNameValuePair("image",
 					fileName));
+			pairs.add((NameValuePair) new BasicNameValuePair("latitude",
+					latitude));
+			pairs.add((NameValuePair) new BasicNameValuePair("longitude",
+					longitude));
+			pairs.add((NameValuePair) new BasicNameValuePair("type",
+					type));
 			
 			try {
 		        MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
