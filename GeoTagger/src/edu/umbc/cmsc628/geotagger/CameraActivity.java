@@ -3,7 +3,6 @@ package edu.umbc.cmsc628.geotagger;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
