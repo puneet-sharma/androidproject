@@ -30,11 +30,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 	private Button stopButton;
 	
 	
-	private static enum Type {
-		stop, signal, traffic, accident, construction
-	}
-	
-	Type type;
+	LocationType type;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -137,9 +133,9 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 				.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
 		for (int i = 0; i < data.size(); i++) {
-			if(isInEnum(data.get(i), Type.class)){
+			if(LocationType.isLocationType(data.get(i))){
 				matchFound=true;
-				type = Type.valueOf(data.get(i));
+				type = LocationType.valueOf(data.get(i));
 				break;
 			}
 		}
@@ -157,19 +153,13 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 		mNoSpeechCountDown.start();
 	}
 	
-	public <E extends Enum<E>> boolean isInEnum(String value, Class<E> enumClass) {
-		  for (E e : enumClass.getEnumConstants()) {
-		    if(e.name().equals(value)) { return true; }
-		  }
-		  return false;
-		}
-
 	@Override
 	public void onRmsChanged(float rmsdB) {
 		// Log.i(TAG, "onRmsChanged");
 	}
 
-	protected CountDownTimer mNoSpeechCountDown = new CountDownTimer(240000,
+	//Run for 2 hours, listen ever 8 seconds
+	protected CountDownTimer mNoSpeechCountDown = new CountDownTimer(7200000,
 			8000) {
 
 		@Override

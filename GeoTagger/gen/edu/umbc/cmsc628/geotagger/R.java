@@ -143,15 +143,16 @@ containing a value of this type.
     }
     public static final class drawable {
         public static final int accident=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
-        public static final int mic=0x7f020002;
-        public static final int stop_sign=0x7f020003;
-        public static final int traffic=0x7f020004;
-        public static final int traffic_signal=0x7f020005;
-        public static final int view_profile=0x7f020006;
+        public static final int construction_icon=0x7f020001;
+        public static final int ic_launcher=0x7f020002;
+        public static final int mic=0x7f020003;
+        public static final int stop_sign=0x7f020004;
+        public static final int traffic=0x7f020005;
+        public static final int traffic_signal=0x7f020006;
+        public static final int view_profile=0x7f020007;
     }
     public static final class id {
-        public static final int action_settings=0x7f050014;
+        public static final int action_settings=0x7f050015;
         public static final int buttonStopListening=0x7f05000c;
         public static final int camera_preview=0x7f050005;
         public static final int hybrid=0x7f050004;
@@ -160,7 +161,7 @@ containing a value of this type.
         public static final int imageView1=0x7f05000b;
         public static final int layers_spinner=0x7f050012;
         public static final int map=0x7f050011;
-        public static final int menu_settings=0x7f050013;
+        public static final int menu_settings=0x7f050014;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int satellite=0x7f050002;
@@ -172,6 +173,7 @@ containing a value of this type.
         public static final int textView4=0x7f050009;
         public static final int textView5=0x7f05000a;
         public static final int textViewOnMap=0x7f050010;
+        public static final int thumbnail=0x7f050013;
     }
     public static final class layout {
         public static final int activity_camera=0x7f030000;
@@ -179,6 +181,7 @@ containing a value of this type.
         public static final int activity_main=0x7f030002;
         public static final int activity_map=0x7f030003;
         public static final int activity_map_spinner=0x7f030004;
+        public static final int popup=0x7f030005;
     }
     public static final class menu {
         public static final int activity_camera=0x7f0a0000;

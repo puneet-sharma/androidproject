@@ -10,6 +10,10 @@ import android.widget.ImageButton;
 
 public class MainActivity extends Activity implements OnClickListener{
 
+	public static enum Type {
+		stop, signal, traffic, accident, construction
+	}
+	
 	ImageButton buttonMic, buttonMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
