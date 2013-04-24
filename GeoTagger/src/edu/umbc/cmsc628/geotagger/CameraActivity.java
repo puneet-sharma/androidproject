@@ -180,7 +180,7 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 		        httpPost.setEntity(entity);
 
 		        response = httpClient.execute(httpPost, new BasicResponseHandler());
-		        playSound();
+		        playSoundUploaded();
 		        if(response.contains("successfully uploaded")){
 		        	System.err.println("Contains 'uploaded'");
 		        }
@@ -198,7 +198,7 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 		
 	}
 	
-	private void playSound(){
+	private void playSoundUploaded(){
 		AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 	      float actualVolume = (float) audioManager
 	          .getStreamVolume(AudioManager.STREAM_MUSIC);

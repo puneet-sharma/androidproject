@@ -160,7 +160,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 
 	//Run for 2 hours, listen ever 8 seconds
 	protected CountDownTimer mNoSpeechCountDown = new CountDownTimer(7200000,
-			8000) {
+			6000) {
 
 		@Override
 		public void onTick(long millisUntilFinished) {

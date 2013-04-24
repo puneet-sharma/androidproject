@@ -243,7 +243,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 			String responseBody = "default";
 			try {
 				responseBody = client.execute(post, responseHandler);
-				// System.err.println(responseBody);
+				System.err.println(responseBody);
 				JSONObject json = new JSONObject(responseBody);
 				locations = json.getJSONArray("locations");
 			} catch (ClientProtocolException e) {
