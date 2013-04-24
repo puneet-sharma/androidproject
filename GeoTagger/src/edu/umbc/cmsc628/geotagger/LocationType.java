@@ -1,11 +1,11 @@
 package edu.umbc.cmsc628.geotagger;
 
 public enum LocationType {
-	STOP, SIGNAL, TRAFFIC, ACCIDENT, CONSTRUCTION, ALL;
+	stop, signal, traffic, accident, construction, all;
 
 	public static boolean isLocationType(String value) {
 		for (LocationType e : LocationType.class.getEnumConstants()) {
-			if (e.name().equals(value)) {
+			if (e.name().equalsIgnoreCase(value)) {
 				return true;
 			}
 		}

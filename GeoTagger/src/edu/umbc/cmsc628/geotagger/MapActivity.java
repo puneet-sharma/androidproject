@@ -138,7 +138,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
         });
 		map.setOnMarkerClickListener(this);
 		// map.setOnInfoWindowClickListener(this);
-		new GetLocationsTask().execute(LocationType.ALL);
+		new GetLocationsTask().execute(LocationType.all);
 	}
 	
 	private void enableLocationSettings() {
@@ -158,22 +158,23 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
 
-		LocationType filter = LocationType.ALL;
+		LocationType filter = LocationType.all;
 		switch (position) {
 		case 1:
-			filter = LocationType.STOP;
+			filter = LocationType.stop;
 			break;
 		case 2:
-			filter = LocationType.TRAFFIC;
+			filter = LocationType.traffic;
 			break;
 		case 3:
-			filter = LocationType.SIGNAL;
+			filter = LocationType.signal;
 			break;
 		case 4:
-			filter = LocationType.ACCIDENT;
+			filter = LocationType.accident;
 			break;
 		}
-		new GetLocationsTask().execute(filter);
+		if(map!=null)
+			new GetLocationsTask().execute(filter);
 	}
 
 	@Override
@@ -270,7 +271,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 							"location");
 					// String time = location.getString("time");
 					LocationType type = LocationType.valueOf(location
-							.getString("type").toUpperCase(Locale.US));
+							.getString("type"));
 					String imageURL = SERVER_IP.concat(
 							location.getString("filename".replace("\\", "")))
 							.concat(".jpg");
@@ -278,7 +279,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 					double longitude = location.getDouble("longitude");
 
 					switch (type) {
-					case STOP:
+					case stop:
 						map.addMarker(new MarkerOptions()
 								.position(new LatLng(latitude, longitude))
 								.title("Stop sign")
@@ -286,7 +287,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 								.icon(BitmapDescriptorFactory
 										.fromResource(R.drawable.stop_sign)));
 						break;
-					case ACCIDENT:
+					case accident:
 						map.addMarker(new MarkerOptions()
 								.position(new LatLng(latitude, longitude))
 								.title("Accident")
@@ -294,7 +295,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 								.icon(BitmapDescriptorFactory
 										.fromResource(R.drawable.accident)));
 						break;
-					case CONSTRUCTION:
+					case construction:
 						map.addMarker(new MarkerOptions()
 								.position(new LatLng(latitude, longitude))
 								.title("Construction")
@@ -302,7 +303,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 								.icon(BitmapDescriptorFactory
 										.fromResource(R.drawable.construction_icon)));
 						break;
-					case SIGNAL:
+					case signal:
 						map.addMarker(new MarkerOptions()
 								.position(new LatLng(latitude, longitude))
 								.title("traffic signal")
@@ -310,7 +311,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 								.icon(BitmapDescriptorFactory
 										.fromResource(R.drawable.traffic_signal)));
 						break;
-					case TRAFFIC:
+					case traffic:
 						map.addMarker(new MarkerOptions()
 								.position(new LatLng(latitude, longitude))
 								.title("High traffic")
