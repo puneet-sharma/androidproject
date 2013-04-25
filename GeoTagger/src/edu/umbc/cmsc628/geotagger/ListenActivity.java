@@ -141,8 +141,8 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 		}
 		if (matchFound) {
 			System.err.println("Matchfound!");
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, this);
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, this);
 		} else {
 			Toast.makeText(
 					getApplicationContext(),
@@ -158,7 +158,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 		// Log.i(TAG, "onRmsChanged");
 	}
 
-	//Run for 2 hours, listen ever 8 seconds
+	//Run for 2 hours, listen every 6 seconds
 	protected CountDownTimer mNoSpeechCountDown = new CountDownTimer(7200000,
 			6000) {
 

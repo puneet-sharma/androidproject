@@ -32,7 +32,10 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -43,31 +46,35 @@ import android.widget.Spinner;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapActivity extends Activity implements OnItemSelectedListener,
-		LocationListener, OnMarkerClickListener {
+		LocationListener, OnMarkerClickListener, OnInfoWindowClickListener {
 
 	private GoogleMap map;
 	private LocationManager locationManager;
 	Location location;
 	private final static String SERVER_IP = "http://mpss.csce.uark.edu/~sharma_fan/";
 	private Marker clickedMarker;
-	View infoWindowView;
+	private View infoWindowView;
+	private ActionMode mActionMode;
+	private String fileName;
 
-//	Handler handler = new Handler() {
-//		@Override
-//		public void handleMessage(Message msg) {
-//			System.err.println("Message received!");
-//			clickedMarker.hideInfoWindow();
-//			clickedMarker.showInfoWindow();
-//		}
-//	};
+	// Handler handler = new Handler() {
+	// @Override
+	// public void handleMessage(Message msg) {
+	// System.err.println("Message received!");
+	// clickedMarker.hideInfoWindow();
+	// clickedMarker.showInfoWindow();
+	// }
+	// };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,51 +103,57 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 				LocationManager.NETWORK_PROVIDER, 0, 0, this);
 	}
 
-	private void setUpMapIfNeeded() {
+	private void setUpMapIfNeeded(CameraPosition camPosition) {
 		if (map == null) {
 			// Try to obtain the map from the SupportMapFragment.
 			map = ((MapFragment) getFragmentManager()
 					.findFragmentById(R.id.map)).getMap();
-			// Check if we were successful in obtaining the map.
-			if (map != null) {
-				setUpMap();
-			}
 		}
+		if (camPosition == null) {
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+					location.getLatitude(), location.getLongitude()), 16));
+		} else {
+			map.clear();
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+					camPosition.target, camPosition.zoom));
+		}
+
+		setUpMap();
 	}
 
 	private void setUpMap() {
 		map.setMyLocationEnabled(true);
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-				new LatLng(location.getLatitude(), location.getLongitude()), 16));
-		//map.setInfoWindowAdapter(new PopUpAdapter(getLayoutInflater()));
+		// map.setInfoWindowAdapter(new PopUpAdapter(getLayoutInflater()));
+		map.setOnInfoWindowClickListener(this);
 		map.setInfoWindowAdapter(new InfoWindowAdapter() {
 
-            // Use default InfoWindow frame
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
+			// Use default InfoWindow frame
+			public View getInfoWindow(Marker arg0) {
+				return null;
+			}
 
-            // Defines the contents of the InfoWindow
-            public View getInfoContents(Marker arg0) {
-                if (clickedMarker.isInfoWindowShown()) {
-                    return infoWindowView;
-                } else {
-                    // Getting view from the layout file info_window_layout
-                    infoWindowView = getLayoutInflater().inflate(
-                            R.layout.popup, null);
-                    // Stash the base view in infoWindowView
-                    new FillImage(getApplicationContext(), infoWindowView, arg0).execute(arg0.getSnippet());
+			// Defines the contents of the InfoWindow
+			public View getInfoContents(Marker arg0) {
+				if (clickedMarker.isInfoWindowShown()) {
+					return infoWindowView;
+				} else {
+					// Getting view from the layout file info_window_layout
+					infoWindowView = getLayoutInflater().inflate(
+							R.layout.popup, null);
+					// Stash the base view in infoWindowView
+					new FillImage(getApplicationContext(), infoWindowView, arg0)
+							.execute(arg0.getSnippet());
 
-                    // Returning the view containing InfoWindow contents
-                    return infoWindowView;
-                }
-            }
-        });
+					// Returning the view containing InfoWindow contents
+					return infoWindowView;
+				}
+			}
+		});
 		map.setOnMarkerClickListener(this);
 		// map.setOnInfoWindowClickListener(this);
 		new GetLocationsTask().execute(LocationType.all);
 	}
-	
+
 	private void enableLocationSettings() {
 		Intent settingsIntent = new Intent(
 				Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -173,7 +186,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 			filter = LocationType.accident;
 			break;
 		}
-		if(map!=null)
+		if (map != null)
 			new GetLocationsTask().execute(filter);
 	}
 
@@ -186,7 +199,7 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 	@Override
 	public void onLocationChanged(Location loc) {
 		location = loc;
-		setUpMapIfNeeded();
+		setUpMapIfNeeded(null);
 		if (locationManager != null)
 			locationManager.removeUpdates(this);
 	}
@@ -243,7 +256,6 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 			String responseBody = "default";
 			try {
 				responseBody = client.execute(post, responseHandler);
-				System.err.println(responseBody);
 				JSONObject json = new JSONObject(responseBody);
 				locations = json.getJSONArray("locations");
 			} catch (ClientProtocolException e) {
@@ -336,18 +348,19 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 		clickedMarker = arg0;
 		infoWindowView = null;
 		return false;
-		
+
 	}
-	
+
 	private class FillImage extends AsyncTask<String, Void, Bitmap> {
 
 		Marker marker;
 		View mainView;
+
 		public FillImage(Context applicationContext, View infoWindowView,
 				Marker arg0) {
 			marker = arg0;
 			mainView = infoWindowView;
-			
+
 		}
 
 		@Override
@@ -376,6 +389,104 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 			thumb.setImageBitmap(result);
 			marker.showInfoWindow();
 		}
+	}
+
+	@Override
+	public void onInfoWindowClick(Marker marker) {
+		if (mActionMode == null) {
+			mActionMode = startActionMode(mActionModeCallback);
+			infoWindowView.setSelected(true);
+			fileName = marker.getSnippet();
+			fileName = fileName.replace(SERVER_IP.concat("images/"), "");
+			fileName = fileName.replace(".jpg", "");
+		}
+	}
+
+	private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+		// Called when the action mode is created; startActionMode() was called
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			// Inflate a menu resource providing context menu items
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.context_menu, menu);
+			return true;
+		}
+
+		// Called each time the action mode is shown. Always called after
+		// onCreateActionMode, but
+		// may be called multiple times if the mode is invalidated.
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			return false; // Return false if nothing is done
+		}
+
+		// Called when the user selects a contextual menu item
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			switch (item.getItemId()) {
+			case R.id.menu_view:
+				mode.finish(); // Action picked, so close the CAB
+				Intent imageIntent = new Intent(getApplicationContext(), ImageViewerActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putString("imageURL", SERVER_IP.concat("images/").concat(fileName).concat(".jpg"));  
+				imageIntent.putExtras(bundle);
+				startActivity(imageIntent);
+				return true;
+			case R.id.menu_delete:
+				mode.finish(); // Action picked, so close the CAB
+				new DeleteMarkerTask().execute(fileName);
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		// Called when the user exits the action mode
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			mActionMode = null;
+		}
+	};
+
+	private class DeleteMarkerTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... args) {
+			String fileName = args[0];
+			String response = "";
+			HttpClient httpClient = new DefaultHttpClient();
+			// HttpContext localContext = new BasicHttpContext();
+			HttpPost httpPost = new HttpPost(SERVER_IP + "/DeleteLocation.php");
+
+			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+			pairs.add((NameValuePair) new BasicNameValuePair("filename",
+					fileName));
+
+			try {
+				httpPost.setEntity(new UrlEncodedFormEntity(pairs));
+				response = httpClient.execute(httpPost,
+						new BasicResponseHandler());
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return response.toString();
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			setUpMapIfNeeded(map.getCameraPosition());
+		}
+
 	}
 
 }

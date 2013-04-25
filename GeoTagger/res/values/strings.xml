@@ -17,17 +17,22 @@
     <string name="speak">Geo tag locations by voice</string>
     <string name="viewonmap">View tagged locations on map</string>
     <string name="title_activity_map">MapActivity</string>
+
     <string-array name="layers_array">
         <item>@string/filter_all</item>
-    	<item>@string/filter_stop</item>
-	    <item>@string/filter_traffic</item>
-	    <item>@string/filter_traffic_signals</item>
-	    <item>@string/filter_accident</item>
-  	</string-array>
-  	<string name="filter_all">Show all</string>
-  	<string name="filter_stop">Stop signs</string>
-  	<string name="filter_traffic">High traffic</string>
-  	<string name="filter_traffic_signals">traffic signals</string>
-  	<string name="filter_accident">Accidents</string>
+        <item>@string/filter_stop</item>
+        <item>@string/filter_traffic</item>
+        <item>@string/filter_traffic_signals</item>
+        <item>@string/filter_accident</item>
+    </string-array>
+
+    <string name="filter_all">Show all</string>
+    <string name="filter_stop">Stop signs</string>
+    <string name="filter_traffic">High traffic</string>
+    <string name="filter_traffic_signals">traffic signals</string>
+    <string name="filter_accident">Accidents</string>
+    <string name="menu_view">View</string>
+    <string name="menu_delete">Delete</string>
+    <string name="title_activity_image_viewer">ImageViewerActivity</string>
 
 </resources>

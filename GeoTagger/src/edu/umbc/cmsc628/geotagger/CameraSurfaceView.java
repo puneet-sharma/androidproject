@@ -69,7 +69,7 @@ class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void takePicture(PictureCallback imageCallback) {
 		long currentTime = System.currentTimeMillis();
-		while(System.currentTimeMillis()-currentTime<2000){}
+		while(System.currentTimeMillis()-currentTime<1000){}
 		camera.takePicture(null, null, imageCallback);
 	}
 }
