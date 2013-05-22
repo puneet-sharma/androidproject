@@ -180,6 +180,8 @@ public class CameraActivity extends Activity implements OnClickListener, Picture
 		        httpPost.setEntity(entity);
 
 		        response = httpClient.execute(httpPost, new BasicResponseHandler());
+		        File file = new File(fileName);
+		        file.delete();
 		        playSoundUploaded();
 		        if(response.contains("successfully uploaded")){
 		        	System.err.println("Contains 'uploaded'");

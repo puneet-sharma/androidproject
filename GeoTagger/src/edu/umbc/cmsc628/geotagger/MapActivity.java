@@ -97,10 +97,10 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 			// "enableGpsDialog");
 		}
 
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1,
 				0, this);
 		locationManager.requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, 0, 0, this);
+				LocationManager.NETWORK_PROVIDER, 1, 0, this);
 	}
 
 	private void setUpMapIfNeeded(CameraPosition camPosition) {
@@ -282,6 +282,8 @@ public class MapActivity extends Activity implements OnItemSelectedListener,
 					location = locations.getJSONObject(i).getJSONObject(
 							"location");
 					// String time = location.getString("time");
+					System.err.println(location
+							.getString("type"));
 					LocationType type = LocationType.valueOf(location
 							.getString("type"));
 					String imageURL = SERVER_IP.concat(

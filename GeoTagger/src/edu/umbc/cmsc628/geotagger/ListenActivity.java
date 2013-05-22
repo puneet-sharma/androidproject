@@ -28,6 +28,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 	protected Intent mSpeechRecognizerIntent;
 	private LocationManager locationManager;
 	private Button stopButton;
+	private Location location;
 	
 	
 	LocationType type;
@@ -46,6 +47,7 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 			enableLocationSettings();
 		}
 
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
 		mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 		mSpeechRecognizer.setRecognitionListener(this);
 		mSpeechRecognizerIntent = new Intent(
@@ -140,9 +142,21 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 			}
 		}
 		if (matchFound) {
-			System.err.println("Matchfound!");
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, this);
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, this);
+			if(location!=null){
+			System.err.println("Matchfound! Lat long-->"+location.getLatitude()+", "+location.getLongitude());
+			Intent camIntent = new Intent(this, CameraActivity.class);
+			Bundle bundle = new Bundle();
+			bundle.putString("latitude", String.valueOf(location.getLatitude()));
+			bundle.putString("longitude", String.valueOf(location.getLongitude()));
+			bundle.putString("type", String.valueOf(type));
+			camIntent.putExtras(bundle);
+			startActivity(camIntent);
+			}
+			else{
+				Toast.makeText(
+						getApplicationContext(),
+						"Unable to activate GPS",Toast.LENGTH_SHORT).show();
+			}
 		} else {
 			Toast.makeText(
 					getApplicationContext(),
@@ -178,17 +192,11 @@ public class ListenActivity extends Activity implements RecognitionListener, Loc
 	};
 
 	@Override
-	public void onLocationChanged(Location location) {
+	public void onLocationChanged(Location loc) {
+		location = loc;
 		System.err.println("GPS coordinates recieved");
-		Intent camIntent = new Intent(this, CameraActivity.class);
-		Bundle bundle = new Bundle();
-		bundle.putString("latitude", String.valueOf(location.getLatitude()));
-		bundle.putString("longitude", String.valueOf(location.getLongitude()));
-		bundle.putString("type", String.valueOf(type));
-		camIntent.putExtras(bundle);
-		startActivity(camIntent);
-		if (locationManager != null)
-			locationManager.removeUpdates(this);
+//		if (locationManager != null)
+//			locationManager.removeUpdates(this);
 		
 	}
 
